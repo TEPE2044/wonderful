@@ -11,19 +11,21 @@ import {
 import { useDebounceFn } from "@vueuse/core";
 import { useToggle } from "bootstrap-vue-next";
 import type { Placement } from "bootstrap-vue-next";
-import { Howl } from "howler";
 import { playerStore } from "../stores/player";
 import { storeToRefs } from "pinia";
-const { playList, isPlay, muted, volume, mode } = storeToRefs(playerStore());
+const { playList, isPlay, muted, volume, mode, currentIndex } = storeToRefs(
+  playerStore()
+);
 const {
   initPlayList,
   handleMuted,
   togglePlay,
-  updatePlayList,
+  addIntoPlayList,
   removeAll,
   removeFromPlayList,
+  createPlayer
 } = playerStore();
-
+// TODO:他说这个Howler每次播完都要重新创建一个实例你说这扯不扯
 const fakeDatas = [
   {
     cover: "/ai.webp",
@@ -90,28 +92,11 @@ let player = null as any;
 console.log(playList.value);
 onMounted(() => {
   initPlayList(fakeDatas);
-  player = new Howl({
-    src: [playList.value[0]?.songURL as string],
-    autoplay: false,
-    volume: volume.value / 100,
-    onend: () => {
-      console.log("歌曲结束");
-      isPlay.value = false;
-      // TODO:可以在这里触发播放下一首
-    },
-    onplay: () => {
-      isPlay.value = true;
-      console.log("开始播放");
-    },
-    onpause: () => {
-      isPlay.value = false;
-      console.log("暂停播放");
-    },
-  });
+  //复用变量但创建新实例  
+  player = createPlayer()
 });
 
 /*
-TODO:
 1.创建Howl实例 y
 2.初始化播放队列 y
 3.控制播放暂停，以及歌曲开始与结束 y
@@ -213,7 +198,7 @@ watchEffect(() => {
 });
 </script>
 <template>
-  <button @click="updatePlayList({ cover: '/ysg.jpg', songURL: 'sdasdas' })">
+  <button @click="addIntoPlayList({ cover: '/ysg.jpg', songURL: 'sdasdas' })">
     加入一首歌
   </button>
   <div
@@ -384,9 +369,6 @@ watchEffect(() => {
                 <BButton variant="light" size="sm" @click.stop="testX()"
                   ><Icon icon="bi:heart" width="16" height="16"
                 /></BButton>
-                <BButton variant="light" size="sm"
-                  ><Icon icon="bi:chat-left-dots" width="16" height="16"
-                /></BButton>
                 <BButton
                   variant="light"
                   size="sm"
@@ -406,10 +388,6 @@ watchEffect(() => {
                     ><Icon icon="bi:three-dots" width="16" height="16"
                   /></template>
                   <template #default>
-                    <BDropdownItem
-                      ><Icon icon="bi:play-circle" width="16" height="16" />
-                      播放</BDropdownItem
-                    >
                     <BDropdownItem
                       ><Icon icon="bi:chat-left-dots" width="16" height="16" />
                       评论</BDropdownItem
