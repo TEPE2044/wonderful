@@ -6,7 +6,7 @@ import {
   shallowRef,
   onMounted,
   watch,
-  useTemplateRef,
+  onUnmounted,
 } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import { useToggle } from "bootstrap-vue-next";
@@ -23,6 +23,7 @@ const {
   removeAll,
   removeFromPlayList,
 } = playerStore();
+
 const fakeDatas = [
   {
     cover: "/ai.webp",
@@ -36,6 +37,46 @@ const fakeDatas = [
   },
   {
     cover: "/ysg1.jpg",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
+    songURL:
+      "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
+  },
+  {
+    cover: "/mod.webp",
     songURL:
       "https://projeck.obs.cn-south-1.myhuaweicloud.com/Radios/1/20250706210102_audio.mp3",
   },
@@ -68,6 +109,7 @@ onMounted(() => {
     },
   });
 });
+
 /*
 TODO:
 1.创建Howl实例 y
@@ -106,10 +148,10 @@ const lyrics = shallowRef([
 const duration = ref(0);
 
 // 播放列表
-const show = ref(false);
+const isOffc = ref(false);
 const placement = ref<Placement>("end");
 const toggleMusicList = () => {
-  show.value = !show.value;
+  isOffc.value = !isOffc.value;
   onTop.value = false;
   expand.hide();
 };
@@ -126,9 +168,27 @@ const onTop = ref(false);
 const toggleExpand = () => {
   onTop.value = !onTop.value;
   expand.toggle();
-  show.value = false;
+  isOffc.value = false;
 };
 
+const testX = () => {
+  console.log("你好");
+};
+
+const handleCloseOffCanvas = (e: MouseEvent) => {
+  const offc = document.getElementById("offc") as HTMLElement;
+  // 如果offc包括自己
+  if (offc?.contains(e.target as Node)) return;
+  isOffc.value = false;
+};
+
+watch(isOffc, (offcanvas_show) => {
+  if (offcanvas_show) {
+    document.addEventListener("click", handleCloseOffCanvas);
+  } else {
+    document.removeEventListener("click", handleCloseOffCanvas);
+  }
+});
 watch(volume, (newVolume) => {
   if (player) {
     player.volume(newVolume / 100);
@@ -142,11 +202,10 @@ watch(mode, () => {
     }
   }
 });
-
-// onMounted(() => {
-//   player.unload();
-//   player = null;
-// });
+onUnmounted(() => {
+  player.unload();
+  player = null;
+});
 
 watchEffect(() => {
   console.log(mode.value);
@@ -262,42 +321,108 @@ watchEffect(() => {
     </div>
 
     <BOffcanvas
+      width="30rem"
       body-scrolling
-      header-class="fw-bold"
       lazy
       no-backdrop
       shadow="lg"
-      title="播放列表"
       :placement="placement"
-      v-model="show"
+      v-model="isOffc"
+      id="offc"
+      class="px-1"
     >
-      <template #default>
-        <div class="buttons">
-          <BButton
-            @click="removeAll()"
-            size="sm"
-            variant="outline-secondary"
-            class="clear d-inline-flex align-items-center gap-1 me-1"
+      <template #header>
+        <div class="oc-header d-flex flex-column justify-content-center">
+          <div
+            class="oc-header-top w-100 d-flex flex-row align-items-center justify-content-between"
           >
-            <Icon icon="bi:trash" width="16" height="16" /> 清空列表
-          </BButton>
-          <BButton
-            size="sm"
-            variant="outline-secondary"
-            class="collect d-inline-flex align-items-center gap-1"
-          >
-            <Icon icon="bi:plus-square" width="16" height="16" />
-            收藏全部
-          </BButton>
+            <div class="title fw-bold h5 flex-grow-1">播放列表</div>
+            <BButton
+              @click.stop="toggleMusicList"
+              class="header-close d-inline-flex align-items-center justify-content-center"
+              variant="outline-dark"
+              ><Icon icon="bi:x-lg" width="16" height="16"
+            /></BButton>
+          </div>
+
+          <div class="oc-btns mt-3">
+            <BButton
+              @click.stop="removeAll()"
+              size="sm"
+              variant="outline-secondary"
+              class="clear d-inline-flex align-items-center gap-1 me-1"
+            >
+              <Icon icon="bi:trash" width="16" height="16" /> 清空列表
+            </BButton>
+            <BButton
+              size="sm"
+              variant="outline-secondary"
+              class="collect d-inline-flex align-items-center gap-1"
+            >
+              <Icon icon="bi:plus-square" width="16" height="16" />
+              收藏全部
+            </BButton>
+          </div>
         </div>
-        <div class="scroll-list mt-5">
+      </template>
+      <template #default>
+        <div class="scroll-list">
           <div
             v-for="song in playList"
             :key="`reks${song}`"
             class="list-item position-relative p-3 border rounded-1 mt-3 d-flex justify-content-between align-items-center shadow-sm"
           >
-            <div class="meta d-flex flex-row align-items-center justify-content-center position-absolute">
-              
+            <div
+              class="meta d-flex flex-row align-items-center justify-content-center position-absolute"
+            >
+              <div
+                class="btns d-flex flex-row align-items-center justify-content-center gap-4"
+              >
+                <BButton variant="light" size="sm" @click.stop="testX()"
+                  ><Icon icon="bi:play-circle" width="16" height="16"
+                /></BButton>
+                <BButton variant="light" size="sm" @click.stop="testX()"
+                  ><Icon icon="bi:heart" width="16" height="16"
+                /></BButton>
+                <BButton variant="light" size="sm"
+                  ><Icon icon="bi:chat-left-dots" width="16" height="16"
+                /></BButton>
+                <BButton
+                  variant="light"
+                  size="sm"
+                  @click.stop="removeFromPlayList(playList.indexOf(song))"
+                  ><Icon icon="bi:trash" width="16" height="16"
+                /></BButton>
+                <BDropdown
+                  :auto-close="true"
+                  no-caret
+                  no-flip
+                  offset="25"
+                  placement="left"
+                  variant="light"
+                  size="sm"
+                >
+                  <template #button-content
+                    ><Icon icon="bi:three-dots" width="16" height="16"
+                  /></template>
+                  <template #default>
+                    <BDropdownItem
+                      ><Icon icon="bi:play-circle" width="16" height="16" />
+                      播放</BDropdownItem
+                    >
+                    <BDropdownItem
+                      ><Icon icon="bi:chat-left-dots" width="16" height="16" />
+                      评论</BDropdownItem
+                    >
+                    <BDropdownDivider></BDropdownDivider>
+                    <BDropdownItem
+                      @click.stop="removeFromPlayList(playList.indexOf(song))"
+                      ><Icon icon="bi:trash" width="16" height="16" />
+                      删除</BDropdownItem
+                    >
+                  </template>
+                </BDropdown>
+              </div>
             </div>
 
             <div class="left d-flex align-items-center gap-3">
@@ -362,6 +487,9 @@ watchEffect(() => {
   z-index: 1054;
   will-change: z-index;
 }
+.oc-header {
+  width: 500px;
+}
 
 .r-icon {
   cursor: pointer;
@@ -401,17 +529,26 @@ watchEffect(() => {
   }
 }
 
-.list-item {
-  will-change: filter transform;
-  transition: all 0.3s ease;
-  .meta{
-    inset: 0;
-
-  }
-  &:hover {
-    transform: scale(1.01);
-    .meta{
-      background-color: #46444444;
+.scroll-list {
+  min-height: 10rem;
+  overflow: hidden;
+  overflow-block: hidden;
+  .list-item {
+    will-change: filter transform;
+    transition: all 0.3s ease;
+    .meta {
+      inset: 0;
+      visibility: hidden;
+      background-color: #46444400;
+      cursor: pointer;
+    }
+    &:hover {
+      transform: scale(1.01);
+      .meta {
+        visibility: visible;
+        background-color: #464444be;
+        z-index: 1;
+      }
     }
   }
 }

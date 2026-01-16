@@ -7,11 +7,9 @@
 </template>
 
 <script setup lang="ts">
-import MusicPlayer2 from './components/MusicPlayer2.vue';
-
+import MusicPlayer2 from "./components/MusicPlayer2.vue";
 
 // import MusicCard from './BCard/MusicCard.vue';
-
 </script>
 
 <style lang="scss" scoped>
