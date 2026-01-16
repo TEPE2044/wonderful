@@ -21,6 +21,9 @@ export const playerStore = defineStore("player", () => {
   const playListLength = computed(() => playList.value.length);
   const currentIndex = ref<number>(0);
   // 不重复增加
+  // TODO:下一首播放？ 需要考虑不同情况
+  // 如果现在是最后一首咋办:那就用push
+  // 非最后一首的情况都用splice(currentIndex,0,data)，splice第二个是删除的个数
   const addIntoPlayList = (data: QueueItem) => {
     // 没法用included，includes比较的是对象引用，而data每次都是新创建的对象（即使内容一样），引用地址不同
     let isExisted = playList.value.some(
