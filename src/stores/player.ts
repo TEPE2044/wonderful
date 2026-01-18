@@ -1,20 +1,31 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { Howl } from "howler";
 import { formatPlayerTime } from "../instance/reks-format-time";
-import { useIntervalFn } from "@vueuse/core";
+
 export interface QueueItem {
   cover: string;
   songURL: string;
 }
+// 全局播放器实例
+// bug-fix:修复了下一首播放时，组件拿不到最新的player实例的问题
+let player: Howl | null = null;
 
 export const playerStore = defineStore("player", () => {
   //播放模式
   const mode = ref<string>("loop");
-
+  //  const mode        = ref<'loop' | 'shuffle' | 'repeat'>('loop')
   const duration = ref<string>("");
   const currentTime = ref<string>("");
   const progress = ref<number>(0);
+
+  watch(mode, () => {
+    if (player) {
+      if (mode.value === "repeat") {
+        player.loop(true);
+      }
+    }
+  });
 
   /* 播放列表 
   增删
@@ -28,7 +39,7 @@ export const playerStore = defineStore("player", () => {
   const playListLength = computed(() => playList.value.length);
   const currentIndex = ref<number>(0);
   // 不重复增加
-  // TODO:下一首播放？ 需要考虑不同情况
+  // 下一首播放？ 需要考虑不同情况
   // 如果现在是最后一首咋办:那就用push
   // 非最后一首的情况都用splice(currentIndex,0,data)，splice第二个是删除的个数
   const addIntoPlayList = (data: QueueItem, currentIndex: number) => {
@@ -85,8 +96,14 @@ export const playerStore = defineStore("player", () => {
   // 保存按钮
   const tempVolume = ref<number>(0);
 
+  watch(volume, (newVolume) => {
+    if (player) {
+      player.volume(newVolume / 100);
+    }
+  });
+
   const createPlayer = () => {
-    let player = null as Howl | null;
+    player?.unload();
     player = new Howl({
       src: [playList.value[currentIndex.value]?.songURL as string],
       autoplay: false,
@@ -98,6 +115,9 @@ export const playerStore = defineStore("player", () => {
       onend: () => {
         isPlay.value = false;
         console.log("歌曲结束");
+        player?.unload();
+        player?.pause();
+        nextSong();
       },
       onplay: () => {
         isPlay.value = true;
@@ -129,29 +149,45 @@ export const playerStore = defineStore("player", () => {
     }
   };
   // 播放暂停切换
-    const togglePlay = (player: any) => {
+  const togglePlay = () => {
     if (isReady.value === false) {
       return;
     }
     isPlay.value = !isPlay.value;
     if (isPlay.value === true) {
-      player.play();
+      player?.play();
     } else {
-      player.pause();
+      player?.pause();
     }
   };
 
-  const updateTime = (player: any) => {
-    const current = Math.round(player.seek()) as number;
-    const total = Math.round(player.duration())  as number;
+  const updateTime = () => {
+    const current = Math.round(player?.seek() as number) as number;
+    const total = Math.round(player?.duration() as number) as number;
     currentTime.value = formatPlayerTime(current);
     duration.value = formatPlayerTime(total);
     progress.value = (current / total) * 100;
     console.log(total, current);
   };
   // 下一首 TODO:如果有下一首，获取下一首的进行播放,先卸载unload，然后src重新设置
-  // const nextSong = (player: any) => {};
-  // const frontSong = (player: any) => {};
+  const nextSong = () => {
+    currentIndex.value = (currentIndex.value + 1) % playListLength.value;
+    switchSong();
+  };
+  const frontSong = () => {
+    currentIndex.value = (currentIndex.value - 1) % playListLength.value;
+    switchSong();
+  };
+
+// bug 切换歌曲的时候进度条和时间没有重置
+  const switchSong = () => {
+    duration.value = "00:00";
+    currentTime.value = "00:00";
+    progress.value = 0;
+    createPlayer();
+    player?.play();
+    isPlay.value = true;
+  };
 
   return {
     playList,
@@ -172,5 +208,7 @@ export const playerStore = defineStore("player", () => {
     removeAll,
     createPlayer,
     togglePlay,
+    nextSong,
+    frontSong,
   };
 });
