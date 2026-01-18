@@ -26,6 +26,7 @@
       togglePlay,
       nextSong,
       frontSong,
+      selectFromList
     } = playerStore();
     // TODO:他说这个Howler每次播完都要重新创建一个实例你说这扯不扯
     const fakeDatas = [
@@ -108,15 +109,14 @@
     });
 
 
-
     /*
     1.创建Howl实例 y
     2.初始化播放队列 y
     3.控制播放暂停，以及歌曲开始与结束 y
     4.音量控制 y
-    5.循环控制 
-    6.上一首和下一首
-    7.点击播放:先暂停，加载
+    5.循环控制 y
+    6.上一首和下一首 y
+    7.点击播放:先暂停，加载 y
     */
 
     //datas
@@ -291,7 +291,7 @@
                 class="list-item position-relative p-3 border rounded-1 mt-3 d-flex justify-content-between align-items-center shadow-sm">
                 <div class="meta d-flex flex-row align-items-center justify-content-center position-absolute">
                   <div class="btns d-flex flex-row align-items-center justify-content-center gap-4">
-                    <BButton variant="light" size="sm" @click.stop="testX()">
+                    <BButton variant="light" size="sm" @click.stop="selectFromList(playList.indexOf(song))">
                       <Icon icon="bi:play-circle" width="16" height="16" />
                     </BButton>
                     <BButton variant="light" size="sm" @click.stop="testX()">
@@ -488,10 +488,10 @@
         width: 16px;
         height: 16px;
         border-radius: 50%;
-        background-color: rgb(204, 115, 115);
+        background-color: rgb(218, 85, 85);
         border: 1px solid white;
         margin-top: -6px;
-        border-image: linear-gradient(#df5634, #ffb7b7) 0 fill / 8 20 8 0 / 0px 0px 0 2000px;
+        border-image: linear-gradient(#df5634, #ffb7b7) 0 fill / 8 22 9 0 / 0px 0px 0 2000px;
         will-change: background;
         transition: all 0.3s ease;
       }

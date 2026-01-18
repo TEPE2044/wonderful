@@ -77,11 +77,6 @@ export const playerStore = defineStore("player", () => {
     playList.value = [];
     console.log(playList.value);
   };
-  // 批量删除
-  // const removeSelectedSongs = (idxArr:Array<number>) => {
-  //   playList.value = playList.value.filter((_, i) => !idxArr.includes(i));
-  //   console.log(playList.value);
-  // };
 
   // 播放状态
   const isPlay = ref<boolean>(false);
@@ -113,11 +108,13 @@ export const playerStore = defineStore("player", () => {
         console.log("播放器就绪");
       },
       onend: () => {
-        isPlay.value = false;
-        console.log("歌曲结束");
-        player?.unload();
-        player?.pause();
-        nextSong();
+        if (mode.value !== "repeat") {
+          isPlay.value = false;
+          console.log("歌曲结束");
+          player?.unload();
+          player?.pause();
+          nextSong();
+        }
       },
       onplay: () => {
         isPlay.value = true;
@@ -169,7 +166,8 @@ export const playerStore = defineStore("player", () => {
     progress.value = (current / total) * 100;
     console.log(total, current);
   };
-  // 下一首 TODO:如果有下一首，获取下一首的进行播放,先卸载unload，然后src重新设置
+
+  // 如果有下一首，获取下一首的进行播放,先卸载unload，然后src重新设置
   const nextSong = () => {
     currentIndex.value = (currentIndex.value + 1) % playListLength.value;
     switchSong();
@@ -179,14 +177,23 @@ export const playerStore = defineStore("player", () => {
     switchSong();
   };
 
-// bug 切换歌曲的时候进度条和时间没有重置
+  // bug 切换歌曲的时候进度条和时间没有重置
   const switchSong = () => {
     duration.value = "00:00";
     currentTime.value = "00:00";
     progress.value = 0;
+    player?.unload();
     createPlayer();
     player?.play();
     isPlay.value = true;
+  };
+
+  //TODO:点击播放分成两种
+  // 一种是列表里的点击播放，一种是别的地方点击播放，第一种点击播放非常好办，只需要获取idx就行；
+  // 第二种需要先判断当前播放列表里有没有这首歌，没有就添加，有就获取索引，然后播放
+  const selectFromList = (idx: number) => {
+    currentIndex.value = idx;
+    switchSong();
   };
 
   return {
@@ -210,5 +217,6 @@ export const playerStore = defineStore("player", () => {
     togglePlay,
     nextSong,
     frontSong,
+    selectFromList,
   };
 });
