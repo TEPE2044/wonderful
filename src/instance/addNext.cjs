@@ -1,4 +1,4 @@
-let dates = [{m:"Jan",person:'lick'},{m:"March",person:'nick'},{m:"Jan",person:'son'},{m:"June",person:'dick'}];
+let dates = [{m:"Jan",person:'lick'},{m:"March",person:'nick'},{m:"Jan",person:'son-next'},{m:"June",person:'dick'}];
 let currentIdx = 2;
 newd = {m:"May",person:'pussy'}
 const addNext = (newd,currentIdx) => {
@@ -8,7 +8,7 @@ const addNext = (newd,currentIdx) => {
     console.log(dates)
   }else{
     // .splice是对原数组进行修改的
-    dates.splice(currentIdx,0,newd)
+    dates.splice(currentIdx+1,0,newd)
     console.log("success2")
     console.log(dates)
   }

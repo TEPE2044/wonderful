@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { Howl } from "howler";
+import { formatPlayerTime } from "../instance/reks-format-time";
+import { useIntervalFn } from "@vueuse/core";
 export interface QueueItem {
   cover: string;
   songURL: string;
@@ -9,12 +11,17 @@ export interface QueueItem {
 export const playerStore = defineStore("player", () => {
   //播放模式
   const mode = ref<string>("loop");
+
+  const duration = ref<string>("");
+  const currentTime = ref<string>("");
+  const progress = ref<number>(0);
+
   /* 播放列表 
   增删
   1. playList 列表
   2. playListLength 列表长度
   3. nowIndex 当前播放位置
-  5.删除后进行下一首
+  4. 删除后进行下一首
   */
 
   const playList = ref<Array<QueueItem>>([]);
@@ -24,19 +31,31 @@ export const playerStore = defineStore("player", () => {
   // TODO:下一首播放？ 需要考虑不同情况
   // 如果现在是最后一首咋办:那就用push
   // 非最后一首的情况都用splice(currentIndex,0,data)，splice第二个是删除的个数
-  const addIntoPlayList = (data: QueueItem) => {
+  const addIntoPlayList = (data: QueueItem, currentIndex: number) => {
     // 没法用included，includes比较的是对象引用，而data每次都是新创建的对象（即使内容一样），引用地址不同
     let isExisted = playList.value.some(
       (song) => song.songURL === data.songURL
     );
     console.log(isExisted);
     if (isExisted === false) {
-      playList.value.push(data);
+      if (currentIndex === playListLength.value - 1) {
+        playList.value.push(data);
+      } else {
+        playList.value.splice(currentIndex + 1, 0, data);
+      }
       console.log(playList.value);
     }
   };
   // 删除
   const removeFromPlayList = (idx: number) => {
+    // 如果删除的是当前播放的歌曲，播放下一首
+    // 如果删除的是最后一首，并且是当前播放的歌曲，播放前一首
+    if (idx === currentIndex.value) {
+      currentIndex.value = currentIndex.value + 1;
+      if (currentIndex.value === playListLength.value - 1) {
+        currentIndex.value = currentIndex.value - 1;
+      }
+    }
     playList.value = playList.value.filter(
       (song) => song !== playList.value[idx]
     );
@@ -67,13 +86,18 @@ export const playerStore = defineStore("player", () => {
   const tempVolume = ref<number>(0);
 
   const createPlayer = () => {
-    return new Howl({
+    let player = null as Howl | null;
+    player = new Howl({
       src: [playList.value[currentIndex.value]?.songURL as string],
       autoplay: false,
       volume: volume.value / 100,
+      onload: () => {
+        isReady.value = true;
+        console.log("播放器就绪");
+      },
       onend: () => {
-        console.log("歌曲结束");
         isPlay.value = false;
+        console.log("歌曲结束");
       },
       onplay: () => {
         isPlay.value = true;
@@ -84,11 +108,17 @@ export const playerStore = defineStore("player", () => {
         console.log("暂停播放");
       },
     });
+    return player;
   };
+  // 初始化播放列表
   const initPlayList = (data: Array<QueueItem>) => {
     playList.value = data;
     currentIndex.value = 0;
+    duration.value = "00:00";
+    currentTime.value = "00:00";
+    progress.value = 0;
   };
+  // 静音控制
   const handleMuted = () => {
     muted.value = !muted.value;
     if (muted.value === true) {
@@ -98,13 +128,26 @@ export const playerStore = defineStore("player", () => {
       volume.value = tempVolume.value;
     }
   };
-  const togglePlay = (player: any) => {
+  // 播放暂停切换
+    const togglePlay = (player: any) => {
+    if (isReady.value === false) {
+      return;
+    }
     isPlay.value = !isPlay.value;
     if (isPlay.value === true) {
       player.play();
     } else {
       player.pause();
     }
+  };
+
+  const updateTime = (player: any) => {
+    const current = Math.round(player.seek()) as number;
+    const total = Math.round(player.duration())  as number;
+    currentTime.value = formatPlayerTime(current);
+    duration.value = formatPlayerTime(total);
+    progress.value = (current / total) * 100;
+    console.log(total, current);
   };
   // 下一首 TODO:如果有下一首，获取下一首的进行播放,先卸载unload，然后src重新设置
   // const nextSong = (player: any) => {};
@@ -118,12 +161,16 @@ export const playerStore = defineStore("player", () => {
     muted,
     mode,
     currentIndex,
+    duration,
+    currentTime,
+    progress,
     initPlayList,
-    togglePlay,
+    updateTime,
     handleMuted,
     addIntoPlayList,
     removeFromPlayList,
     removeAll,
-    createPlayer
+    createPlayer,
+    togglePlay,
   };
 });
