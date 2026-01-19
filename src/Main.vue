@@ -2,7 +2,7 @@
   <div class="main">
     <MusicPlayer2 />
   </div>
-
+  
   <!-- <MusicCard/> -->
 </template>
 
