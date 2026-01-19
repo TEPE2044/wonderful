@@ -26,9 +26,10 @@
       togglePlay,
       nextSong,
       frontSong,
-      selectFromList
+      selectFromList,
+      handleClickPlay
     } = playerStore();
-    // TODO:他说这个Howler每次播完都要重新创建一个实例你说这扯不扯
+    // 他说这个Howler每次播完都要重新创建一个实例你说这扯不扯
     const fakeDatas = [
       {
         cover: "/ai.webp",
@@ -246,7 +247,7 @@
             <img class="thumbail-img" :src="playList[currentIndex]?.cover" />
           </div>
           <span>{{ currentTime }}</span>
-          <BFormInput class="progress" v-model="progress" type="range" max="100" min="0" />
+          <BFormInput class="progress" @input="handleClickPlay(progress)" v-model="progress" type="range" max="100" min="0" />
           <span>{{ duration }}</span>
         </div>
         <div class="controls-3 d-flex gap-4 align-items-center">

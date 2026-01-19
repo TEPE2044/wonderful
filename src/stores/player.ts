@@ -188,13 +188,19 @@ export const playerStore = defineStore("player", () => {
     isPlay.value = true;
   };
 
-  //TODO:点击播放分成两种
-  // 一种是列表里的点击播放，一种是别的地方点击播放，第一种点击播放非常好办，只需要获取idx就行；
-  // 第二种需要先判断当前播放列表里有没有这首歌，没有就添加，有就获取索引，然后播放
+  //点击播放分成两种
+  // 一种是列表里的点击播放，一种是别的地方点击播放，第一种点击播放非常好办，只需要获取idx就行； y
+  // TODO:第二种需要先判断当前播放列表里有没有这首歌，没有就添加，有就获取索引，然后播放
   const selectFromList = (idx: number) => {
     currentIndex.value = idx;
     switchSong();
   };
+
+  const handleClickPlay = (value:number) => {
+    const total = Math.round(player?.duration() as number) as number;
+    player?.seek(value/100*total)
+    updateTime()
+  }
 
   return {
     playList,
@@ -218,5 +224,6 @@ export const playerStore = defineStore("player", () => {
     nextSong,
     frontSong,
     selectFromList,
+    handleClickPlay
   };
 });
