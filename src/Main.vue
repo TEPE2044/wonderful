@@ -1,5 +1,7 @@
 <template>
+  
   <div class="main">
+    <BotCheck/>
     <MusicPlayer2 />
   </div>
   
@@ -8,6 +10,7 @@
 
 <script setup lang="ts">
 import MusicPlayer2 from "./components/MusicPlayer2.vue";
+import BotCheck from "./instance/bot-check.vue";
 
 // import MusicCard from './BCard/MusicCard.vue';
 </script>
