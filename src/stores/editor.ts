@@ -16,7 +16,9 @@ export const editorStore = defineStore("editor", () => {
   const handleCreated = (editorInstance: IDomEditor) => {
     editor.value = editorInstance;
   };
-  // 回调啥？
+  // @onChange回调啥？非常简单的道理，当然是回调editor实例
+  // 想想Howler播放器为什么新创建一个实例之后原来的没法控制了
+  // 要继续输送这个editor到下一个位置才行，就是这个道理
   const handleChange = (editorInstance: IDomEditor) => {
     valueHTML.value = editorInstance.getHtml();
   };
