@@ -13,7 +13,7 @@ let player: Howl | null = null;
 
 export const playerStore = defineStore("player", () => {
   //播放模式
-  const mode = ref<string>("loop");
+  const mode = ref<string>('loop')
   //  const mode        = ref<'loop' | 'shuffle' | 'repeat'>('loop')
   const duration = ref<string>("");
   const currentTime = ref<string>("");
