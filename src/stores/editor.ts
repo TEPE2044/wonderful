@@ -1,17 +1,14 @@
 import type { IDomEditor } from "@wangeditor-next/editor";
 import { defineStore } from "pinia";
 import { ref, shallowRef } from "vue";
-import { Boot, DomEditor } from "@wangeditor-next/editor";
+import { Boot } from "@wangeditor-next/editor";
 import markdownModule from "@wangeditor-next/plugin-markdown";
 
-
 export const editorStore = defineStore("editor", () => {
-  // markdown支持
-  Boot.registerModule(markdownModule);
   // 编辑器实例
   const editor = shallowRef<IDomEditor>();
-
-
+  // markdown支持
+  Boot.registerModule(markdownModule);
   // 内容
   const valueHTML = ref<string>("");
 
@@ -27,17 +24,17 @@ export const editorStore = defineStore("editor", () => {
   };
 
   //草稿箱
-//   const draftLatest = (idle: boolean) => {
-//     if ((idle = true)) {
-//       localStorage.setItem("draft", valueHTML.value);
-//       alert("已自动存储");
-//     }
-//   };
+  //   const draftLatest = (idle: boolean) => {
+  //     if ((idle = true)) {
+  //       localStorage.setItem("draft", valueHTML.value);
+  //       alert("已自动存储");
+  //     }
+  //   };
 
   return {
     editor,
     valueHTML,
     handleCreated,
-    handleChange
+    handleChange,
   };
 });

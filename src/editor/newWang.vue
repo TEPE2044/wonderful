@@ -2,24 +2,54 @@
 import "@wangeditor-next/editor/dist/css/style.css";
 import { storeToRefs } from "pinia";
 import { editorStore } from "../stores/editor";
-import { onMounted, onBeforeUnmount, watchEffect } from "vue";
+import { onMounted, onBeforeUnmount, watchEffect, ref } from "vue";
 import { Editor, Toolbar } from "@wangeditor-next/editor-for-vue";
 import type { IToolbarConfig } from "@wangeditor-next/editor";
 import { DomEditor } from "@wangeditor-next/editor";
+import { useDebounceFn } from "@vueuse/core";
 const { editor, valueHTML } = storeToRefs(editorStore());
 const { handleCreated, handleChange } = editorStore();
-const IMAGE_SVG = '<svg viewBox=\"0 0 1024 1024\"><path d=\"M981.184 160.096C837.568 139.456 678.848 128 512 128S186.432 139.456 42.816 160.096C15.296 267.808 0 386.848 0 512s15.264 244.16 42.816 351.904C186.464 884.544 345.152 896 512 896s325.568-11.456 469.184-32.096C1008.704 756.192 1024 637.152 1024 512s-15.264-244.16-42.816-351.904zM384 704V320l320 192-320 192z\"></path></svg>'
 const toolbarConfig: Partial<IToolbarConfig> = {
   toolbarKeys: [
+    "headerSelect",
+    "undo",
+    "redo",
+    "|",
+    "bold",
+    "italic",
+    "underline",
+    "color",
+    "|",
+    "numberedList",
+    "divider",
+    "|",
+    "emotion",
     {
       key: "group-image",
       title: "图片工具",
-      iconSvg:IMAGE_SVG,
+      iconSvg:
+        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><g fill="currentColor"><path d="M6.002 5.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0"/><path d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71l-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54L1 12.5v-9a.5.5 0 0 1 .5-.5z"/></g></svg>',
       menuKeys: ["insertImage", "uploadImage", "editImage", "deleteImage"],
-    },"emotion"
+    },
+    {
+      key: "group-video",
+      title: "视频工具",
+      iconSvg:
+        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2z"/></svg>',
+      menuKeys: ["insertVideo", "uploadVideo"],
+    },
   ],
 };
-const editorConfig = { placeholder: "请输入内容..." };
+const what = ref(false || JSON.parse(sessionStorage.getItem("what") as any));
+const toggleWhat = useDebounceFn(() => {
+  what.value = !what.value;
+  sessionStorage.setItem("what", JSON.stringify(what.value));
+  location.reload();
+}, 3000);
+
+const defaultToolBar: Partial<IToolbarConfig> = {};
+
+const editorConfig = { placeholder: "随心写" };
 onMounted(() => {
   valueHTML.value = "";
 });
@@ -41,12 +71,20 @@ const printEditToolBar = (editorInstance: any) => {
 </script>
 <template>
   <button @click="printEditToolBar(editor)">看头</button>
+  <button @click="toggleWhat()">随心写</button>
   <div class="edit-space">
     <Toolbar
+      v-if="what"
       style="border-bottom: 1px solid #ccc"
       :editor="editor"
       :defaultConfig="toolbarConfig"
       :mode="'default'"
+    />
+    <Toolbar
+      v-else
+      style="border-bottom: 1px solid #ccc"
+      :editor="editor"
+      :defaultConfig="defaultToolBar"
     />
     <Editor
       style="height: 500px; overflow-y: hidden"
