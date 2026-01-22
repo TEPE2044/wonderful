@@ -60,73 +60,84 @@ watchEffect(() => {
 const pub_tags = ref<string[]>([]);
 </script>
 <template>
-  <div class="edit-space mx-auto">
-    <BAlert show variant="warning"> 暂时不支持上传本地视频 </BAlert>
-    
-    <Toolbar
-      class="toolbar"
-      :editor="editor"
-      :defaultConfig="easyEditor"
-      :mode="'default'"
-    />
-    <Editor
-      class="editor"
-      v-model="valueHTML"
-      :mode="'default'"
-      :defaultConfig="editorConfig"
-      @onCreated="handleCreated"
-      @onChange="handleChange"
-    />
-    <div class="tags mt-3">
-      <BFormTags
-        v-model="pub_tags"
-        :limit="5"
-        remove-on-delete
-        add-button-text="Add"
-        limit-tags-text="最多只能设置5个标签噢"
-        input-id="tags-basic"
-        placeholder="设置标签(使用回车确定标签)"
-      />
+  <div class="editors mx-auto">
+    <div class="title w-100">
+      <input class="title-space w-100 border-0 mb-3 px-2" id="floatingTitle" type="text" placeholder="从标题开始吧" />
+    </div>
+
+    <div class="edit-space">
+      <Toolbar class="toolbar" :editor="editor" :defaultConfig="easyEditor" :mode="'default'" />
+      <Editor class="editor" v-model="valueHTML" :mode="'default'" :defaultConfig="editorConfig"
+        @onCreated="handleCreated" @onChange="handleChange" />
+    </div>
+    <div class="tags mt-3 mb-3">
+      <BFormTags v-model="pub_tags" :limit="5" remove-on-delete add-button-text="Add" limit-tags-text="最多只能设置5个标签噢"
+        input-id="tags-basic" placeholder="设置标签(使用回车确定标签)" />
     </div>
     <div class="options mt-4">
+      <!-- 是否转载 -->
       <BPopover placement="bottom">
         <template #target>
-            <BButton class="float-end" variant="success"> 发送</BButton>
+          <BButton class="float-end" variant="success"> 发布 </BButton>
         </template>
-        <template #title><strong>确认发送？</strong></template>
-        <BButton size="sm" class="me-2" variant="success"
-          ><Icon icon="bi-send" /> 发送</BButton
-        >
-        <BButton size="sm" variant="primary"
-          ><Icon icon="bi-box" /> 暂存</BButton
-        >
+        <template #title><strong>确认发布 ？</strong></template>
+        <BButton size="sm" class="me-2" variant="success">
+          <Icon icon="bi-send" /> 发布
+        </BButton>
+        <BButton size="sm" variant="primary">
+          <Icon icon="bi-box" /> 暂存
+        </BButton>
       </BPopover>
+       <BButton class="float-end me-2" variant="primary" >预览</BButton>
     </div>
   </div>
+  <!-- 预览模态框 -->
 </template>
 
 <style lang="scss" scoped>
-.edit-space {
+.editors {
   width: 650px;
   min-height: 301px;
   background-color: white;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  > .editor {
-    border-top: 1px solid rgb(211, 211, 211);
+
+  .title {
+    .title-space {
+      font-size: 24px;
+      outline: none;
+
+      &:focus {
+        box-shadow: none;
+      }
+    }
   }
-  > .toolbar {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    border-top: 0.5px solid rgb(226, 226, 226);
-    border-bottom: 2px solid gainsboro;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+
+  .edit-space {
+    >.toolbar {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      border-bottom: 2px solid gainsboro;
+    }
+
+    >.editor {
+      overflow: auto;
+      max-height: 400px;
+      border-top: 1px solid rgb(211, 211, 211);
+      border-bottom: 2px solid gainsboro;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    .editor,
+    .toolbar {
+      width: 600px;
+    }
   }
-  .editor,
-  .toolbar,
+
+
   .tags {
     width: 600px;
   }
