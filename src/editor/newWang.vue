@@ -6,10 +6,10 @@ import { onMounted, onBeforeUnmount, watchEffect, ref } from "vue";
 import { Editor, Toolbar } from "@wangeditor-next/editor-for-vue";
 import type { IToolbarConfig } from "@wangeditor-next/editor";
 import { DomEditor } from "@wangeditor-next/editor";
-import { useDebounceFn } from "@vueuse/core";
+// import { useDebounceFn } from "@vueuse/core";
 const { editor, valueHTML } = storeToRefs(editorStore());
 const { handleCreated, handleChange } = editorStore();
-const toolbarConfig: Partial<IToolbarConfig> = {
+const easyEditor: Partial<IToolbarConfig> = {
   toolbarKeys: [
     "headerSelect",
     "undo",
@@ -36,16 +36,18 @@ const toolbarConfig: Partial<IToolbarConfig> = {
       title: "视频工具",
       iconSvg:
         '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2z"/></svg>',
-      menuKeys: ["insertVideo", "uploadVideo"],
+      menuKeys: ["insertVideo"],
+      // 暂不支持本地上传视频 menuKeys: ["insertVideo", "uploadVideo"],
     },
+    "insertLink",
   ],
 };
-const what = ref(false || JSON.parse(sessionStorage.getItem("what") as any));
-const toggleWhat = useDebounceFn(() => {
-  what.value = !what.value;
-  sessionStorage.setItem("what", JSON.stringify(what.value));
-  location.reload();
-}, 3000);
+// const what = ref(false || JSON.parse(sessionStorage.getItem("what") as any));
+// // const toggleWhat = useDebounceFn(() => {
+//   what.value = !what.value;
+//   sessionStorage.setItem("what", JSON.stringify(what.value));
+//   location.reload();
+// }, 500);
 
 const defaultToolBar: Partial<IToolbarConfig> = {};
 
@@ -68,33 +70,69 @@ const printEditToolBar = (editorInstance: any) => {
   const curToolbarConfig = toolbar?.getConfig();
   console.log(curToolbarConfig);
 };
+
+const pub_tags = ref<string[]>([]);
 </script>
 <template>
   <button @click="printEditToolBar(editor)">看头</button>
-  <button @click="toggleWhat()">随心写</button>
+  <!-- <button @click="toggleWhat()">随心写</button> -->
   <div class="edit-space">
-    <Toolbar
+    <!-- <Toolbar
       v-if="what"
-      style="border-bottom: 1px solid #ccc"
+      class="toolbar"
+      style="border-bottom: 1px solid #ccc;"
       :editor="editor"
-      :defaultConfig="toolbarConfig"
+      :defaultConfig="easyEditor"
       :mode="'default'"
-    />
+    /> -->
+    <!-- <Toolbar
+      class="toolbar"
+      :editor="editor"
+      :defaultConfig="easyEditor"
+      :mode="'default'"
+    /> -->
     <Toolbar
-      v-else
       style="border-bottom: 1px solid #ccc"
       :editor="editor"
       :defaultConfig="defaultToolBar"
     />
     <Editor
-      style="height: 500px; overflow-y: hidden"
+      class="editor"
       v-model="valueHTML"
       :mode="'default'"
       :defaultConfig="editorConfig"
       @onCreated="handleCreated"
       @onChange="handleChange"
     />
+    <div class="tags mt-3">
+      <BFormTags v-model="pub_tags" :limit="5" remove-on-delete input-id="tags-basic" placeholder="设置标签" />
+    </div>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.edit-space {
+  width: 650px;
+  height: fit-content;
+  > .editor {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom: 1px solid rgb(211, 211, 211);
+    height: 600px;
+  }
+  > .toolbar {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    border: 1px solid rgb(173, 168, 168);
+    border-bottom: 2px solid gainsboro;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  .editor,
+  .toolbar,
+  tags {
+    width: 650px;
+  }
+}
+</style>
