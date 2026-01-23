@@ -9,8 +9,12 @@ export const editorStore = defineStore("editor", () => {
   const editor = shallowRef<IDomEditor>();
   // markdown支持
   // Boot.registerModule(markdownModule);
+  //标题
+  const pub_title = ref<string>("")
   // 内容
   const valueHTML = ref<string>("");
+  // 标签
+  const pub_tags = ref<string[]>([]);
 
   // 记录 editor 实例，重要！
   const handleCreated = (editorInstance: IDomEditor) => {
@@ -34,6 +38,8 @@ export const editorStore = defineStore("editor", () => {
   return {
     editor,
     valueHTML,
+    pub_title,
+    pub_tags,
     handleCreated,
     handleChange,
   };

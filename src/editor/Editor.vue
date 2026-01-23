@@ -2,12 +2,22 @@
 import "@wangeditor-next/editor/dist/css/style.css";
 import { storeToRefs } from "pinia";
 import { editorStore } from "../stores/editor";
-import { onMounted, onBeforeUnmount, watchEffect, ref } from "vue";
+import { onMounted, onBeforeUnmount, watchEffect } from "vue";
 import { Editor, Toolbar } from "@wangeditor-next/editor-for-vue";
 import type { IToolbarConfig } from "@wangeditor-next/editor";
 import { Icon } from "@iconify/vue";
-const { editor, valueHTML } = storeToRefs(editorStore());
+import { useToggle } from "bootstrap-vue-next";
+const { editor, valueHTML, pub_tags,pub_title } = storeToRefs(editorStore());
 const { handleCreated, handleChange } = editorStore();
+// TODO:tag长度限制、专业模式->开启MarkDown、新手指引、自动保存、退出前保存、挂机保存、XSS过滤、CRUD、草稿、评论
+const epw = useToggle("preview");
+const preview = () => {
+  if (pub_title.value !== "") {
+    epw.show();
+  }
+  console.log("标题为空");
+};
+
 const easyEditor: Partial<IToolbarConfig> = {
   toolbarKeys: [
     {
@@ -57,22 +67,45 @@ watchEffect(() => {
   console.log(valueHTML.value);
 });
 
-const pub_tags = ref<string[]>([]);
 </script>
 <template>
   <div class="editors mx-auto">
     <div class="title w-100">
-      <input class="title-space w-100 border-0 mb-3 px-2" id="floatingTitle" type="text" placeholder="从标题开始吧" />
+      <input
+        v-model="pub_title"
+        class="title-space w-100 border-0 mb-3 px-2"
+        id="floatingTitle"
+        type="text"
+        placeholder="从标题开始吧"
+      />
     </div>
 
     <div class="edit-space">
-      <Toolbar class="toolbar" :editor="editor" :defaultConfig="easyEditor" :mode="'default'" />
-      <Editor class="editor" v-model="valueHTML" :mode="'default'" :defaultConfig="editorConfig"
-        @onCreated="handleCreated" @onChange="handleChange" />
+      <Toolbar
+        class="toolbar"
+        :editor="editor"
+        :defaultConfig="easyEditor"
+        :mode="'default'"
+      />
+      <Editor
+        class="editor"
+        v-model="valueHTML"
+        :mode="'default'"
+        :defaultConfig="editorConfig"
+        @onCreated="handleCreated"
+        @onChange="handleChange"
+      />
     </div>
     <div class="tags mt-3 mb-3">
-      <BFormTags v-model="pub_tags" :limit="5" remove-on-delete add-button-text="Add" limit-tags-text="最多只能设置5个标签噢"
-        input-id="tags-basic" placeholder="设置标签(使用回车确定标签)" />
+      <BFormTags
+        v-model="pub_tags"
+        :limit="5"
+        remove-on-delete
+        add-button-text="Add"
+        limit-tags-text="最多只能设置5个标签噢"
+        input-id="tags-basic"
+        placeholder="设置标签(使用回车确定标签)"
+      />
     </div>
     <div class="options mt-4">
       <!-- 是否转载 -->
@@ -80,7 +113,7 @@ const pub_tags = ref<string[]>([]);
         <template #target>
           <BButton class="float-end" variant="success"> 发布 </BButton>
         </template>
-        <template #title><strong>确认发布 ？</strong></template>
+        <template #title><strong>确认发布?</strong></template>
         <BButton size="sm" class="me-2" variant="success">
           <Icon icon="bi-send" /> 发布
         </BButton>
@@ -88,13 +121,51 @@ const pub_tags = ref<string[]>([]);
           <Icon icon="bi-box" /> 暂存
         </BButton>
       </BPopover>
-       <BButton class="float-end me-2" variant="primary" >预览</BButton>
+      <BButton class="float-end me-2" variant="primary" @click="preview()"
+        >预览</BButton
+      >
     </div>
   </div>
   <!-- 预览模态框 -->
+  <BModal
+    no-close-on-backdrop
+    no-backdrop
+    no-footer
+    scrollable
+    size="lg"
+    id="preview"
+  >
+    <h2 class="ptitle mb-4">{{ pub_title }}</h2>
+    <span
+      v-for="tag in pub_tags"
+      class="ptags border rounded-2 bg-white text-black me-2 p-1"
+      >{{ tag }}</span
+    >
+    <hr />
+    <div class="content" v-html="valueHTML"></div>
+    <div class="shadow-sm d-flex align-items-center justify-content-evenly p-4">
+      <div class="author d-flex gap-3 align-items-center">
+            <BAvatar size="50"/>
+            <div class="author-details">
+                <div class="name fw-bolder h5">梦璃東</div>
+                <div class="sign text-secondary">梦璃東有梦</div>
+            </div>
+      </div>
+      <BButton variant="outline-secondary" size="sm">+ 关注</BButton>
+    </div>
+  </BModal>
 </template>
 
 <style lang="scss" scoped>
+#preview {
+  .ptitle {
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  }
+  .ptags {
+    cursor: pointer;
+    font-size: small;
+  }
+}
 .editors {
   width: 650px;
   min-height: 301px;
@@ -115,16 +186,16 @@ const pub_tags = ref<string[]>([]);
   }
 
   .edit-space {
-    >.toolbar {
+    > .toolbar {
       display: flex;
       flex-direction: column;
-      flex-wrap: wrap;
       border-bottom: 2px solid gainsboro;
     }
 
-    >.editor {
-      overflow: auto;
-      max-height: 400px;
+    > .editor {
+      overflow-y: auto;
+      min-height: 400px;
+      max-height: 600px;
       border-top: 1px solid rgb(211, 211, 211);
       border-bottom: 2px solid gainsboro;
       border-bottom-left-radius: 5px;
@@ -136,7 +207,6 @@ const pub_tags = ref<string[]>([]);
       width: 600px;
     }
   }
-
 
   .tags {
     width: 600px;
