@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import "@wangeditor-next/editor/dist/css/style.css";
+import reapi from "../instance/reapi";
 import { storeToRefs } from "pinia";
 import { editorStore } from "../stores/editor";
 import { onMounted, onBeforeUnmount, watchEffect } from "vue";
 import { Editor, Toolbar } from "@wangeditor-next/editor-for-vue";
-import type { IToolbarConfig } from "@wangeditor-next/editor";
+import type { IEditorConfig, IToolbarConfig } from "@wangeditor-next/editor";
 import { Icon } from "@iconify/vue";
 import { useToggle } from "bootstrap-vue-next";
-const { editor, valueHTML, pub_tags,pub_title } = storeToRefs(editorStore());
+const { editor, valueHTML, pub_tags, pub_title } = storeToRefs(editorStore());
 const { handleCreated, handleChange } = editorStore();
 // TODO:tag长度限制、专业模式->开启MarkDown、新手指引、自动保存、退出前保存、挂机保存、XSS过滤、CRUD、草稿、评论
 const epw = useToggle("preview");
@@ -53,7 +54,42 @@ const easyEditor: Partial<IToolbarConfig> = {
   ],
 };
 
-const editorConfig = { placeholder: "随心写" };
+const editorConfig: Partial<IEditorConfig> = {
+  placeholder: "请输入内容...",
+  MENU_CONF: {
+    uploadImage: {
+      metaWithUrl: false,
+      onSuccess: () => {},
+      onFailed: () => {},
+      onError: () => {},
+      base64LimitSize: 0,
+      customUpload: async (file: any, insertFn: any) => {
+        // 前端拦截图片类型
+        const form = new FormData();
+        form.append("img", file);
+
+        try {
+          const { data: res } = await reapi({
+            url: "/blog/upload/img",
+            method: "POST",
+            data:form,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          if (res.errno === 0) {
+            // insertFn 会把图片插到编辑器
+            insertFn(res.data.url, res.data.alt || "", res.data.url);
+          } else {
+            alert(res.message || "上传失败");
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+    },
+  },
+};
 onMounted(() => {
   valueHTML.value = "";
 });
@@ -66,7 +102,6 @@ onBeforeUnmount(() => {
 watchEffect(() => {
   console.log(valueHTML.value);
 });
-
 </script>
 <template>
   <div class="editors mx-auto">
@@ -145,11 +180,11 @@ watchEffect(() => {
     <div class="content" v-html="valueHTML"></div>
     <div class="shadow-sm d-flex align-items-center justify-content-evenly p-4">
       <div class="author d-flex gap-3 align-items-center">
-            <BAvatar size="50"/>
-            <div class="author-details">
-                <div class="name fw-bolder h5">梦璃東</div>
-                <div class="sign text-secondary">梦璃東有梦</div>
-            </div>
+        <BAvatar size="50" />
+        <div class="author-details">
+          <div class="name fw-bolder h5">梦璃東</div>
+          <div class="sign text-secondary">梦璃東有梦</div>
+        </div>
       </div>
       <BButton variant="outline-secondary" size="sm">+ 关注</BButton>
     </div>
