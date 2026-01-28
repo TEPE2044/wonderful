@@ -98,6 +98,7 @@ onBeforeUnmount(() => {
   const temp = editor.value;
   if (temp == null) return;
   temp.destroy();
+  editor.value = undefined
 });
 watchEffect(() => {
   console.log(valueHTML.value);
