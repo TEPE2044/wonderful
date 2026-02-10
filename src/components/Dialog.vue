@@ -66,6 +66,7 @@ const handleKeydown = (event: KeyboardEvent) => {
           class="form-control"
           placeholder="输入消息..."
           rows="2"
+          style="resize: none;"
           @keydown="handleKeydown"
         ></textarea>
         <button class="btn btn-primary" type="button" @click="sendMessage">
