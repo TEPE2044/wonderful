@@ -8,6 +8,8 @@ export default defineConfig({
   plugins: [
     vue(),
     Components({
+      dirs: ['src/demos','src/editor','src/instance','src/components'],
+      extensions: ['vue'],
       resolvers: [BootstrapVueNextResolver()],
     }),
   ],

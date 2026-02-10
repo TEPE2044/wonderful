@@ -72,7 +72,7 @@ const editorConfig: Partial<IEditorConfig> = {
           const { data: res } = await reapi({
             url: "/blog/upload/img",
             method: "POST",
-            data:form,
+            data: form,
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
   const temp = editor.value;
   if (temp == null) return;
   temp.destroy();
-  editor.value = undefined
+  editor.value = undefined;
 });
 watchEffect(() => {
   console.log(valueHTML.value);
@@ -106,23 +106,7 @@ watchEffect(() => {
 </script>
 <template>
   <div class="editors mx-auto">
-    <div class="title w-100">
-      <input
-        v-model="pub_title"
-        class="title-space w-100 border-0 mb-3 px-2"
-        id="floatingTitle"
-        type="text"
-        placeholder="从标题开始吧"
-      />
-    </div>
-
     <div class="edit-space">
-      <Toolbar
-        class="toolbar"
-        :editor="editor"
-        :defaultConfig="easyEditor"
-        :mode="'default'"
-      />
       <Editor
         class="editor"
         v-model="valueHTML"
@@ -132,76 +116,16 @@ watchEffect(() => {
         @onChange="handleChange"
       />
     </div>
-    <div class="tags mt-3 mb-3">
-      <BFormTags
-        v-model="pub_tags"
-        :limit="5"
-        remove-on-delete
-        add-button-text="Add"
-        limit-tags-text="最多只能设置5个标签噢"
-        input-id="tags-basic"
-        placeholder="设置标签(使用回车确定标签)"
-      />
-    </div>
-    <div class="options mt-4">
-      <!-- 是否转载 -->
-      <BPopover placement="bottom">
-        <template #target>
-          <BButton class="float-end" variant="success"> 发布 </BButton>
-        </template>
-        <template #title><strong>确认发布?</strong></template>
-        <BButton size="sm" class="me-2" variant="success">
-          <Icon icon="bi-send" /> 发布
-        </BButton>
-        <BButton size="sm" variant="primary">
-          <Icon icon="bi-box" /> 暂存
-        </BButton>
-      </BPopover>
-      <BButton class="float-end me-2" variant="primary" @click="preview()"
-        >预览</BButton
-      >
-    </div>
+    <Toolbar
+      class="toolbar"
+      :editor="editor"
+      :defaultConfig="easyEditor"
+      :mode="'default'"
+    />
   </div>
-  <!-- 预览模态框 -->
-  <BModal
-    no-close-on-backdrop
-    no-backdrop
-    no-footer
-    scrollable
-    size="lg"
-    id="preview"
-  >
-    <h2 class="ptitle mb-4">{{ pub_title }}</h2>
-    <span
-      v-for="tag in pub_tags"
-      class="ptags border rounded-2 bg-white text-black me-2 p-1"
-      >{{ tag }}</span
-    >
-    <hr />
-    <div class="content" v-html="valueHTML"></div>
-    <div class="shadow-sm d-flex align-items-center justify-content-evenly p-4">
-      <div class="author d-flex gap-3 align-items-center">
-        <BAvatar size="50" />
-        <div class="author-details">
-          <div class="name fw-bolder h5">梦璃東</div>
-          <div class="sign text-secondary">梦璃東有梦</div>
-        </div>
-      </div>
-      <BButton variant="outline-secondary" size="sm">+ 关注</BButton>
-    </div>
-  </BModal>
 </template>
 
 <style lang="scss" scoped>
-#preview {
-  .ptitle {
-    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-  }
-  .ptags {
-    cursor: pointer;
-    font-size: small;
-  }
-}
 .editors {
   width: 650px;
   min-height: 301px;
@@ -209,17 +133,6 @@ watchEffect(() => {
   padding: 20px;
   display: flex;
   flex-direction: column;
-
-  .title {
-    .title-space {
-      font-size: 24px;
-      outline: none;
-
-      &:focus {
-        box-shadow: none;
-      }
-    }
-  }
 
   .edit-space {
     > .toolbar {
