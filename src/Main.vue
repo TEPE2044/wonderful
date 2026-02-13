@@ -1,7 +1,8 @@
 <template>
   
   <div class="main">
-    <Dialog/>
+    <!-- <Dialog/> -->
+    <RTalk/>
   </div>
 </template>
 
