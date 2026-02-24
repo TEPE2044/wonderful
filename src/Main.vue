@@ -3,9 +3,13 @@
   <div class="main">
     <RouterView />
   </div>
+  <SubThem/>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import SubThem from './instance/SubThem.vue';
+
+</script>
 
 <style lang="scss" scoped>
 .main {
