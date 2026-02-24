@@ -1,15 +1,29 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+import { ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const options = [
-  {text: '公告', value: 'anmt'},
-  {text: '站内信', value: 'mes'},
-]
+  { text: "公告", value: "anmt" },
+  { text: "站内信", value: "mes" },
+];
 
-const selected = ref('anmt')
+const route = useRoute();
+const router = useRouter();
+const selected = ref(route.name === "mes" ? "mes" : "anmt");
 
+watch(selected, (value) => {
+  if (value === route.name) return;
+  router.push({ name: value });
+});
 
-// TODO:1.获取联系人列表接口 2.在未选择任何联系人时缺省页 3.点击联系人后获取聊天记录接口 4.发送消息接口
+watch(
+  () => route.name,
+  (name) => {
+    if (name === "anmt" || name === "mes") {
+      selected.value = name;
+    }
+  },
+);
 </script>
 
 <template>
@@ -28,7 +42,7 @@ const selected = ref('anmt')
 
     <div class="rt-content px-5 mx-auto mt-3">
       <div class="rt-main">
-        <Dialog />
+        <RouterView />
       </div>
     </div>
   </div>

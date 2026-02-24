@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AnnouncementPanel: typeof import('./src/components/AnnouncementPanel.vue')['default']
     Apage: typeof import('./src/components/Apage.vue')['default']
     Avatar: typeof import('./src/components/Avatar.vue')['default']
     BAvatar: typeof import('bootstrap-vue-next/components/BAvatar')['BAvatar']

@@ -7,18 +7,22 @@ const router = createRouter({
       path: "/",
       name: "rtalk",
       component: () => import("../components/RTalk.vue"),
-      children:[
+      children: [
         {
-            path:'anmt',
-            name:'dialog',
-            component:() => import("../components/Dialog.vue")
+          path: "",
+          redirect: { name: "anmt" },
         },
-           {
-            path:'mes',
-            name:'anno',
-            component:() => import("../components/Dialog.vue")
-        }
-      ]
+        {
+          path: "anmt",
+          name: "anmt",
+          component: () => import("../components/AnnouncementPanel.vue"),
+        },
+        {
+          path: "mes",
+          name: "mes",
+          component: () => import("../components/Dialog.vue"),
+        },
+      ],
     },
   ],
 });
