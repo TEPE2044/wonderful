@@ -161,13 +161,12 @@ watch(
             :class="['msg-box', msg.type === 'op' ? 'op-box' : 'my-box']"
             class="border rounded p-2"
           >
-            <div class="name" :title="msg.name">{{ msg.name }}</div>
             <div class="content">{{ msg.content }}</div>
           </div>
         </div>
       </div>
       <div class="dialog-footer border-top p-2">
-        <div class="input-group align-items-end">
+        <div class="input-group">
           <textarea
             v-model="inputText"
             class="form-control"
@@ -339,16 +338,6 @@ watch(
       flex-wrap: wrap;
       height: fit-content;
 
-      .name {
-        font-size: 0.72rem;
-        color: #6c757d;
-        max-width: 160px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        margin-bottom: 0.2rem;
-      }
-
       .content {
         width: 100%;
         display: block;
@@ -361,10 +350,10 @@ watch(
 
   .dialog-footer {
     width: 100%;
+    max-height: 150px;
     background-color: rgba(255, 255, 255, 0.75);
 
     textarea {
-      max-height: 150px;
       overflow-y: auto;
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
