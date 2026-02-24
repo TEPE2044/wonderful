@@ -25,9 +25,8 @@ function useBlogSubscription() {
   const latestBlog = ref<Blog | null>(null);
 
   // 开始订阅，拿到“关闭函数”
-  const unsubscribe = wsClient.subscribe<{
-    blogNewFromFollowing: Blog;
-  }>(
+  const unsubscribe = wsClient.subscribe<{ blogNewFromFollowing: Blog;}>
+  (
     {
       query: `subscription { testFollowing { blogId title authorId } }`,
     },

@@ -46,7 +46,7 @@ importers:
         version: 5.3.8(@popperjs/core@2.11.8)
       bootstrap-vue-next:
         specifier: ^0.40.9
-        version: 0.40.9(@vueuse/core@14.1.0(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))
+        version: 0.40.9(@vueuse/core@14.1.0(vue@3.5.25(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3))
       graphql:
         specifier: ^16.12.0
         version: 16.12.0
@@ -74,6 +74,9 @@ importers:
       vue:
         specifier: ^3.5.24
         version: 3.5.25(typescript@5.9.3)
+      vue-router:
+        specifier: '4'
+        version: 4.6.4(vue@3.5.25(typescript@5.9.3))
       vue-select-avatar:
         specifier: 3.0.0-alpha.5
         version: 3.0.0-alpha.5(vue@3.5.25(typescript@5.9.3))
@@ -836,6 +839,9 @@ packages:
 
   '@vue/compiler-ssr@3.5.25':
     resolution: {integrity: sha512-ritPSKLBcParnsKYi+GNtbdbrIE1mtuFEJ4U1sWeuOMlIziK5GtOL85t5RhsNy4uWIXPgk+OUdpnXiTdzn8o3A==}
+
+  '@vue/devtools-api@6.6.4':
+    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
 
   '@vue/devtools-api@7.7.9':
     resolution: {integrity: sha512-kIE8wvwlcZ6TJTbNeU2HQNtaxLx3a84aotTITUuL/4bzfPxzajGBOoqjMhwZJ8L9qFYDU/lAYMEEm11dnZOD6g==}
@@ -1995,6 +2001,11 @@ packages:
   vscode-uri@3.1.0:
     resolution: {integrity: sha512-/BpdSx+yCQGnCvecbyXdxHDkuk55/G3xwnC0GqY4gmQ3j+A+g8kzzgB4Nk/SINjqn6+waqw3EgbVF2QKExkRxQ==}
 
+  vue-router@4.6.4:
+    resolution: {integrity: sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==}
+    peerDependencies:
+      vue: ^3.5.0
+
   vue-select-avatar@3.0.0-alpha.5:
     resolution: {integrity: sha512-SSoebXkc9wJrolg/aP0IdzgpFlVi/DPjpcFmq9oBK1JsOCRZQAGaXGtWW1bV9E3p1spX4Z11d/5/ZOG8R6KPYQ==}
     peerDependencies:
@@ -2670,6 +2681,8 @@ snapshots:
       '@vue/compiler-dom': 3.5.25
       '@vue/shared': 3.5.25
 
+  '@vue/devtools-api@6.6.4': {}
+
   '@vue/devtools-api@7.7.9':
     dependencies:
       '@vue/devtools-kit': 7.7.9
@@ -2952,11 +2965,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  bootstrap-vue-next@0.40.9(@vueuse/core@14.1.0(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)):
+  bootstrap-vue-next@0.40.9(@vueuse/core@14.1.0(vue@3.5.25(typescript@5.9.3)))(vue-router@4.6.4(vue@3.5.25(typescript@5.9.3)))(vue@3.5.25(typescript@5.9.3)):
     dependencies:
       vue: 3.5.25(typescript@5.9.3)
     optionalDependencies:
       '@vueuse/core': 14.1.0(vue@3.5.25(typescript@5.9.3))
+      vue-router: 4.6.4(vue@3.5.25(typescript@5.9.3))
 
   bootstrap@5.3.8(@popperjs/core@2.11.8):
     dependencies:
@@ -3818,6 +3832,11 @@ snapshots:
       sass-embedded: 1.96.0
 
   vscode-uri@3.1.0: {}
+
+  vue-router@4.6.4(vue@3.5.25(typescript@5.9.3)):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.25(typescript@5.9.3)
 
   vue-select-avatar@3.0.0-alpha.5(vue@3.5.25(typescript@5.9.3)):
     dependencies:
