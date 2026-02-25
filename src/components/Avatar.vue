@@ -6,7 +6,6 @@ import {
   Viewport,
   Preview,
   isCancelError,
-  getErrorMessage,
 } from "vue-select-avatar";
 
 import { ref } from "vue";

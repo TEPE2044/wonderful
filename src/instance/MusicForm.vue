@@ -70,12 +70,12 @@ const apiProducts: ApiProduct[] = [
 
 // TypeScript knows selectedProductCode is a string (matching productCode field type)
 const selectedProductCode = ref<string>();
-const audioFile = ref<File | null>(null);
+// const audioFile = ref<File | null>(null);
 /** 处理音频上传 */
-const handleAudioUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  audioFile.value = target.files?.[0] || null;
-};
+// const handleAudioUpload = (event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   audioFile.value = target.files?.[0] || null;
+// };
 </script>
 
 <style lang="scss" scoped></style>
