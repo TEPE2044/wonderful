@@ -5,7 +5,7 @@
 
 <script lang="ts" setup>
 import { createClient } from "graphql-ws";
-import { ref, onUnmounted } from "vue";
+import { ref, onUnmounted, onMounted } from "vue";
 
 /* ---------- 类型 ---------- */
 interface Blog {
@@ -56,6 +56,7 @@ function useBlogSubscription() {
       complete: () => {},
     },
   );
+  onMounted(() => useBlogSubscription())
 
   // 组件销毁时停止监听
   onUnmounted(() => unsubscribe());
