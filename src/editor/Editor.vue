@@ -6,9 +6,8 @@ import { editorStore } from "../stores/editor";
 import { onMounted, onBeforeUnmount, watchEffect } from "vue";
 import { Editor, Toolbar } from "@wangeditor-next/editor-for-vue";
 import type { IEditorConfig, IToolbarConfig } from "@wangeditor-next/editor";
-import { Icon } from "@iconify/vue";
 import { useToggle } from "bootstrap-vue-next";
-const { editor, valueHTML, pub_tags, pub_title } = storeToRefs(editorStore());
+const { editor, valueHTML, pub_title } = storeToRefs(editorStore());
 const { handleCreated, handleChange } = editorStore();
 // TODO:tag长度限制、专业模式->开启MarkDown、新手指引、自动保存、退出前保存、挂机保存、XSS过滤、CRUD、草稿、评论
 const epw = useToggle("preview");
