@@ -1,13 +1,15 @@
 <template>
   
-  <div class="main">
+  <!-- <div class="main">
     <RouterView />
-  </div>
-  <SubThem/>
+  </div> -->
+  <!-- <SubThem/> -->
+  <ToastBoy/>
 </template>
 
 <script setup lang="ts">
-import SubThem from './instance/SubThem.vue';
+// import SubThem from './instance/SubThem.vue';
+import ToastBoy from './instance/toastBoy.vue';
 
 </script>
 

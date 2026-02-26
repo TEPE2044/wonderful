@@ -16,6 +16,7 @@ declare module 'vue' {
     Avatar: typeof import('./src/components/Avatar.vue')['default']
     BAvatar: typeof import('bootstrap-vue-next/components/BAvatar')['BAvatar']
     BButton: typeof import('bootstrap-vue-next/components/BButton')['BButton']
+    BButtonGroup: typeof import('bootstrap-vue-next/components/BButton')['BButtonGroup']
     BDropdown: typeof import('bootstrap-vue-next/components/BDropdown')['BDropdown']
     BDropdownItem: typeof import('bootstrap-vue-next/components/BDropdown')['BDropdownItem']
     BFormRadioGroup: typeof import('bootstrap-vue-next/components/BFormRadio')['BFormRadioGroup']
@@ -46,5 +47,6 @@ declare module 'vue' {
     RTalk: typeof import('./src/components/RTalk.vue')['default']
     SafeSettings: typeof import('./src/components/SafeSettings.vue')['default']
     SubThem: typeof import('./src/instance/SubThem.vue')['default']
+    ToastBoy: typeof import('./src/instance/toastBoy.vue')['default']
   }
 }
