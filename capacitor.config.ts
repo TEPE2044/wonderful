@@ -1,9 +1,17 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.example.app',
-  appName: 'wonderful',
-  webDir: 'dist'
+  appId: 'com.yourcompany.app',
+  appName: 'YourApp',
+  webDir: 'dist',
+  android: {
+    buildOptions: {
+      keystorePath: 'android/app/your-keystore.jks',
+      keystorePassword: 'your-password',
+      keystoreAlias: 'your-alias',
+      keystoreAliasPassword: 'your-password',
+    },
+  },
 };
 
 export default config;
