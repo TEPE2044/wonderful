@@ -127,21 +127,25 @@ const create_timeline = () => {
 <style lang="scss" scoped>
 .timeline {
   width: 100%;
-  min-height: 400px;
+  min-height: 50vh;
 
   .timeline-grid {
     display: grid;
     grid-template-columns: 1fr 1.2fr 1fr;
     gap: 16px;
-    align-items: start;
+    align-items: stretch;
+    min-height: 50vh;
   }
 
   .timeline-panel {
-    min-height: 400px;
+    min-height: 50vh;
+    max-height: 50vh;
     padding: 16px;
     border: 1px solid #e5e7eb;
     border-radius: 16px;
     background: #fff;
+    display: flex;
+    flex-direction: column;
   }
 
   .timeline-panel-title {
@@ -157,6 +161,10 @@ const create_timeline = () => {
   }
 
   .timeline-view {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+
     .timeline-item {
       position: relative;
     }
@@ -199,6 +207,8 @@ const create_timeline = () => {
   }
 
   .timeline-right {
+    overflow-y: auto;
+
     .timeline-static {
       display: flex;
       flex-direction: column;
@@ -214,6 +224,8 @@ const create_timeline = () => {
 
   .timeline-static {
     padding: 0;
+    overflow-y: auto;
+    flex: 1;
 
     .timeline-static-item {
       display: flex;
