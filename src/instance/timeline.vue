@@ -8,7 +8,6 @@
         <div class="d-flex gap-2 flex-wrap mt-3">
           <BButton variant="dark" @click="create_timeline()" :disabled="created || timelineList.length > 0">生成时间线</BButton>
           <BButton variant="dark" @click="reset_timeline()">重置</BButton>
-          <BButton variant="dark" class="add" @click="add_item_into_timeline()">+ 添加</BButton>
         </div>
       </section>
 
@@ -34,8 +33,8 @@
             </div>
           </div>
         </div>
-
-        <BButton variant="success" class="timeline-result mt-3" :disabled="timelineList.length === 0" @click="generate_static_timeline()">生成静态时间线</BButton>
+        <BButton variant="dark" class="add" @click="add_item_into_timeline()">+ 添加</BButton>
+        <BButton variant="success" class="timeline-result mt-2" :disabled="timelineList.length === 0" @click="generate_static_timeline()">生成静态时间线</BButton>
       </section>
 
       <section class="timeline-panel timeline-right">
