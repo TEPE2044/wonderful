@@ -3,7 +3,7 @@
     <div class="timeline-grid">
       <section class="timeline-panel timeline-left">
         <div class="timeline-panel-title">输入</div>
-        <BFormTextarea class="timeline-textarea" v-model="tl_ctx" placeholder="每行一条：日期 - 事件" />
+        <BFormTextarea class="timeline-textarea" v-model="tl_ctx" placeholder="示例：2026-05-01 - 吃麦当劳" />
 
         <div class="d-flex gap-2 flex-wrap mt-3">
           <BButton variant="dark" @click="create_timeline()" :disabled="created || timelineList.length > 0">生成时间线</BButton>
@@ -23,7 +23,7 @@
 
             <div class="timeline-card flex-grow-1">
               <div class="d-flex flex-row gap-3 align-items-center">
-                <input class="timeline-date fw-bold" v-model="t.date" />
+                <input type="date" class="timeline-date fw-bold" v-model="t.date" />
                 <input class="timeline-event flex-grow-1" v-model="t.event" />
               </div>
 
@@ -65,11 +65,17 @@ interface TimeLine {
   date: string;
   event: string;
 }
+import dayjs from "dayjs";
 import { ref } from "vue";
 const created = ref(false);
 const timelineList = ref<TimeLine[]>([]); // 初始化空数组更安全
 const staticTimeline = ref<TimeLine[]>([]);
 const tl_ctx = ref<string>("");
+
+const normalize_date = (value: string) => {
+  const parsed = dayjs(value.trim());
+  return parsed.isValid() ? parsed.format("YYYY-MM-DD") : "";
+};
 
 const add_item_into_timeline = () => {
     timelineList.value.push({
@@ -83,6 +89,13 @@ const remove_timeline_item = (index: number) => {
 };
 
 const generate_static_timeline = () => {
+  timelineList.value = timelineList.value
+    .map((item) => ({
+      date: item.date.trim(),
+      event: item.event.trim(),
+    }))
+    .filter((item) => item.date && item.event);
+
   staticTimeline.value = timelineList.value.map((item) => ({
     date: item.date,
     event: item.event,
@@ -104,20 +117,26 @@ const create_timeline = () => {
   timelineList.value = [];
 
   for (let item of items) {
-    // 再按 - 分割 date 和 event
-    const [date, event] = item.split("-");
+    if (!item.trim()) continue;
+    // 找到分隔符的位置
+    const separatorIndex = item.indexOf(" - ");
     try {
-      if (date && event) {
-        timelineList.value.push({
-          date: date.trim(),
-          event: event.trim(),
-        });
+      if (separatorIndex > -1) {
+        const date = item.slice(0, separatorIndex);
+        const event = item.slice(separatorIndex + 3);
+        const normalizedDate = normalize_date(date);
+
+        if (normalizedDate && event.trim()) {
+          timelineList.value.push({
+            date: normalizedDate,
+            event: event.trim(),
+          });
+        }
       }
     } catch (e) {
       console.warn("格式错误");
     }
   }
-
   console.log("最终时间线对象数组：", timelineList.value);
   created.value = true;
 };
