@@ -7,7 +7,15 @@
 
         <div class="d-flex gap-2 flex-wrap mt-3">
           <BButton variant="dark" @click="create_timeline()" :disabled="created || timelineList.length > 0">生成时间线</BButton>
-          <BButton variant="dark" @click="reset_timeline()">重置</BButton>
+          <BPopover placement="bottom">
+            <template #target>
+              <BButton variant="dark">重置</BButton>
+            </template>
+            <template #title>
+              该操作会清除本页一切内容  
+            </template>
+            <BButton variant="dark" @click="reset_timeline()">确定重置</BButton>
+          </BPopover>
         </div>
       </section>
 
